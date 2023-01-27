@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AOI Technicien</string>
+
+    <string name="title_login">Gestion</string>
+
+    <string name="input_login">Utilisateur</string>
+    <string name="input_psw">Mot de passe</string>
+
+    <string name="btn_connect">Se connecter</string>
+
+    <string name="forgot_login">Aucun identifiant ?</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="home_frag">Dashboard</string>
+    <string name="user_frag">Compte</string>
+    <string name="config_frag">Configuration</string>
+    <string name="sync_frag">Synchronisation</string>
+</resources>
