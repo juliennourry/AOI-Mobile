@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class HomeActivity extends AppCompatActivity {
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         // -- default Fragment
         if(savedInstanceState == null) {
             getSupportFragmentManager().
@@ -41,8 +43,8 @@ public class HomeActivity extends AppCompatActivity {
                 case R.id.home_nav:
                     replaceFragment(new HomeFragment());
                     break;
-                case R.id.sync_nav:
-                    replaceFragment(new HomeFragment());
+                case R.id.qrcode_nav:
+                    replaceFragment(new ScanFragment());
                     break;
                 case R.id.user_nav:
                     replaceFragment(new HomeFragment());
@@ -85,7 +87,7 @@ public class HomeActivity extends AppCompatActivity {
         cancelSlide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(HomeActivity.this, "Close Slide", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, "Fermeture du menu", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
@@ -113,5 +115,9 @@ public class HomeActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
         dialog.getWindow().setGravity(Gravity.BOTTOM);
+    }
+
+    public void refreshFragment() {
+        replaceFragment(new ScanFragment());
     }
 }

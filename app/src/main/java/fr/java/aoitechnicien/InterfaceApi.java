@@ -11,4 +11,7 @@ import retrofit2.http.Query;
 public interface InterfaceApi {
     @POST("/auth")
     Call<ModelAuth> auth(@Body RequestBody body);
+
+    @GET("/api/users")
+    Call<ModelApiUser> getUser();
 }

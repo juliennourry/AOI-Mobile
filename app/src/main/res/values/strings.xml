@@ -2,11 +2,15 @@
     <string name="app_name">AOI Technicien</string>
 
     <string name="title_login">Gestion</string>
+    <string name="title_qrcode">Scan QR Code</string>
 
     <string name="input_login">Utilisateur</string>
     <string name="input_psw">Mot de passe</string>
+    <string name="input_qr_code">Numéro de l\'appareil</string>
 
     <string name="btn_connect">Se connecter</string>
+    <string name="btn_search_item">Rechercher l\'appareil</string>
+
 
     <string name="forgot_login">Aucun identifiant ?</string>
 

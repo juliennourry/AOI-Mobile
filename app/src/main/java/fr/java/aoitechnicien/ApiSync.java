@@ -1,6 +1,5 @@
 package fr.java.aoitechnicien;
 
-import android.app.Activity;
 import android.util.Log;
 
 import okhttp3.Interceptor;
@@ -11,22 +10,43 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiHelper {
+public class ApiSync {
+
+    private String token;
     private static final String BASE_URL = "http://10.100.0.153:8000";
     private static Retrofit retrofit;
     private static InterfaceApi api;
-    private static String strToken;
-    static SharedHelper sharedhelper;
 
-    // -- SESSION INFORMATION
-    public static final String sessionKey = "sessionKey";
-    public static final String tokenKey = "tokenKey";
+    public ApiSync(String strToken) {
+        this.token = strToken;
+    }
 
+    public Boolean syncUser() {
+        //Log.e("APISYNC", token);
+        getApiSync().getUser().enqueue(new Callback<ModelApiUser>() {
+            public void onResponse(Call<ModelApiUser> call, Response<ModelApiUser> response) {
+                if (response.isSuccessful()) {
 
-    public static InterfaceApi getApi(String strToken){
-        //Log.e("APISYNC", "NOBEARER :: " + strToken);
+                    //Log.e("APIRESPONSE", response.toString());
+                    Log.e("API_SYNC_DATA", response.body().getUsers());
 
-        Interceptor intercept = new AuthInterceptor(strToken);
+                }
+            }
+
+            public void onFailure(Call<ModelApiUser> call, Throwable t) {
+                Log.e("APISYNC", t.toString());
+            }
+        });
+        return true;
+    }
+
+    public Boolean syncItem() {
+        return true;
+    }
+
+    public InterfaceApi getApiSync(){
+
+        Interceptor intercept = new AuthInterceptor(token);
 
         if(retrofit == null){
             retrofit = new Retrofit.Builder()
@@ -42,8 +62,4 @@ public class ApiHelper {
         }
         return api;
     }
-
 }
-
-
-
