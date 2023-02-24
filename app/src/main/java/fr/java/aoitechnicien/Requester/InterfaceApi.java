@@ -1,11 +1,14 @@
 package fr.java.aoitechnicien.Requester;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import fr.java.aoitechnicien.Models.ModelApiItem;
 import fr.java.aoitechnicien.Models.ModelApiSite;
 import fr.java.aoitechnicien.Models.ModelApiUser;
 import fr.java.aoitechnicien.Models.ModelAuth;
+import fr.java.aoitechnicien.Models.ModelIntervention;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -26,4 +29,7 @@ public interface InterfaceApi {
 
     @GET("/api/sites/{id}")
     Call<ModelApiSite> getSite(@Path("id") int idSite);
+
+    @POST("/api/intervention_vouchers")
+    Call<ModelIntervention> createIntervention(@Body RequestBody body);
 }

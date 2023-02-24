@@ -15,6 +15,7 @@ import fr.java.aoitechnicien.Models.ModelApiSite;
 import fr.java.aoitechnicien.Models.ModelApiUser;
 import fr.java.aoitechnicien.Models.ModelAuth;
 import fr.java.aoitechnicien.Function.SharedHelper;
+import fr.java.aoitechnicien.Models.ModelIntervention;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -30,12 +31,14 @@ public class ApiSync {
     SharedHelper sharedhelper;
     private Context context;
     private String token;
-    private static final String BASE_URL = "http://10.100.0.153:8000";
+    private static final String BASE_URL = "http://10.0.30.193:8000";
     private static Retrofit retrofit;
     private static InterfaceApi api;
     private static List<ModelApiUser> dataArrayList;
     private static List<ModelApiItem> dataArrayItem;
     private static ModelApiSite dataArraySite;
+
+    private static ModelIntervention dataIntervention;
     private static SQLiteDatabase database;
 
     // -- DB
@@ -135,6 +138,34 @@ public class ApiSync {
     }
 
     public Boolean syncItem() {
+        return true;
+    }
+
+    public Boolean syncInterventions(String token) {
+        List<JSONObject> interventions = databaseHelper.getInterventions(database, "0");
+        for(JSONObject intervention : interventions)
+        {
+            Log.d("INTER", intervention.toString());
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), intervention.toString());
+            ApiHelper.getApi(token).createIntervention(body).enqueue(new Callback<ModelIntervention>() {
+                public void onResponse(Call<ModelIntervention> call, Response<ModelIntervention> response_intervention) {
+                    Log.e("DEBUG_SHOW_RESPONSE_INTERVENTION", String.valueOf(response_intervention));
+                    if (response_intervention.isSuccessful()) {
+                       dataIntervention = response_intervention.body();
+
+                        Log.e("DEBUG_SITE_INTERVENTION", dataIntervention.getId().toString());
+                        try {
+                            databaseHelper.updateIntervention(database, Integer.parseInt(intervention.get("tempId").toString()), dataIntervention.getId());
+                        } catch (JSONException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                public void onFailure(Call<ModelIntervention> call, Throwable t) {
+                    Log.e("DEBUG_THREAD_INFO_FAILED_INTER", t.toString());
+                }
+            });
+        }
         return true;
     }
 
