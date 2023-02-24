@@ -2,13 +2,16 @@ package fr.java.aoitechnicien;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -16,6 +19,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.CameraSource;
@@ -24,6 +29,9 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+
+import fr.java.aoitechnicien.Function.ToastHelper;
+import fr.java.aoitechnicien.Requester.DatabaseHelper;
 
 
 public class ScanFragment extends Fragment {
@@ -35,7 +43,12 @@ public class ScanFragment extends Fragment {
     private CameraSource cameraSource;
     private Boolean cameraPerm = false;
     private Boolean controlCameraPerm = false;
+    private Boolean qrScan = true;
+    private Button btnSearchItemUUID;
+    private ProgressBar progressBarSearchItem;
     private final int CAMERA_PERMISSION_REQUEST_CODE = 100001;
+    private final int FINE_LOCATION_PERMISSION_REQUEST_CODE = 200002;
+    ToastHelper toastHelper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +58,20 @@ public class ScanFragment extends Fragment {
 
         cameraView = (SurfaceView) fRoot.findViewById(R.id.camera_view);
         barcodeInfo = (TextView) fRoot.findViewById(R.id.code_info);
+        btnSearchItemUUID = (Button) fRoot.findViewById(R.id.btnSearchItemUUID);
+        progressBarSearchItem = (ProgressBar) fRoot.findViewById(R.id.progress_bar_search_item);
+
+        // -- DB
+        final DatabaseHelper databaseHelper;
+        // -- START CREATE DB
+        databaseHelper = new DatabaseHelper(fRoot.getContext());
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
+
+        // -- TOAST PREPARED
+        toastHelper = new ToastHelper(getActivity());
+
+        // -- CALL PERMISSION LOCATION
+        checkLocationPermission(fRoot);
 
         barcodeDetector =
                 new BarcodeDetector.Builder(fRoot.getContext())
@@ -54,9 +81,6 @@ public class ScanFragment extends Fragment {
                 .Builder(fRoot.getContext(), barcodeDetector)
                 .setRequestedPreviewSize(640, 480)
                 .build();
-
-
-
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
 
             @Override
@@ -66,13 +90,10 @@ public class ScanFragment extends Fragment {
                     if(cameraPerm) {
                         controlCameraPerm = controlPermissions(fRoot);
                         if(controlCameraPerm){
-                            Log.d("PERMISSIONADO", "yes perm");
                             cameraSource.start(cameraView.getHolder());
                         } else {
-                            Log.d("PERMISSIONADO", "no perm");
                         }
                     } else {
-                        Log.d("PERMISSIONADO", "no perm 2");
                     }
                 } catch (IOException ie) {
                     Log.d("CAMERA SOURCE", ie.getMessage());
@@ -94,15 +115,50 @@ public class ScanFragment extends Fragment {
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-                if (barcodes.size() != 0) {
+                if (barcodes.size() != 0 && qrScan) {
                     barcodeInfo.post(new Runnable() {
                         public void run() {
-                            barcodeInfo.setText(    // Update the TextView
-                                    barcodes.valueAt(0).displayValue
-                            );
+                            barcodeInfo.setText(barcodes.valueAt(0).displayValue);
+                            // -- SIMULATE CLICK BUTTON
+                            btnSearchItemUUID.setVisibility(View.GONE);
+                            progressBarSearchItem.setVisibility(View.VISIBLE);
+                            btnSearchItemUUID.performClick();
+                            qrScan = false;
                         }
                     });
                 }
+            }
+        });
+
+        btnSearchItemUUID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(databaseHelper.checkUuidItem(database, barcodeInfo.getText().toString())) {
+                    toastHelper.LoadToasted("Accès autorisé.");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            btnSearchItemUUID.setVisibility(View.VISIBLE);
+                            progressBarSearchItem.setVisibility(View.GONE);
+                            qrScan = true;
+                        }
+                    }, 2000);
+                    Intent intent = new Intent(getActivity(), ItemActivity.class);
+                    intent.putExtra("uuid", barcodeInfo.getText().toString().trim());
+                    startActivity(intent);
+                } else {
+                    toastHelper.LoadToasted("Appareil inexistant ou vos droits d'accès sont restreints.");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            btnSearchItemUUID.setVisibility(View.VISIBLE);
+                            progressBarSearchItem.setVisibility(View.GONE);
+                            qrScan = true;
+                        }
+                    }, 2000);
+                }
+
             }
         });
 
@@ -123,16 +179,25 @@ public class ScanFragment extends Fragment {
     }
 
     private boolean controlPermissions(View fRoot) {
-        Log.d("PERMISSIONADO", "no perm 3");
         String requiredPermission = Manifest.permission.CAMERA;
         int checkVal = fRoot.getContext().checkCallingOrSelfPermission(requiredPermission);
-        Log.d("PERMISSIONADO", String.valueOf(checkVal));
-        Log.d("PERMISSIONADO", String.valueOf(PackageManager.PERMISSION_GRANTED));
+        Log.d("DEBUG_PERMISSION", String.valueOf(checkVal));
+        Log.d("DEBUG_PERMISSION", String.valueOf(PackageManager.PERMISSION_GRANTED));
         if (checkVal==PackageManager.PERMISSION_GRANTED){
             return true;
         }
         return false;
+    }
 
+    private boolean checkLocationPermission(View fRoot) {
 
+        if (ContextCompat.checkSelfPermission(fRoot.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions((Activity) fRoot.getContext(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    FINE_LOCATION_PERMISSION_REQUEST_CODE);
+        }
+        return true;
     }
 }

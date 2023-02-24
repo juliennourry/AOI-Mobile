@@ -1,4 +1,4 @@
-package fr.java.aoitechnicien;
+package fr.java.aoitechnicien.Requester;
 
 import android.app.Activity;
 import android.util.Log;
@@ -27,7 +27,8 @@ public class AuthInterceptor implements Interceptor {
         Request original = chain.request();
 
         Request.Builder builder = original.newBuilder()
-                .header("Authorization", "Bearer " + token);
+                .header("Authorization", "Bearer " + token)
+                .header("Accept", "application/json");
 
         Request request = builder.build();
         return chain.proceed(request);

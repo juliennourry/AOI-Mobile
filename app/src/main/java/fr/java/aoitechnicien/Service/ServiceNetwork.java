@@ -1,4 +1,4 @@
-package fr.java.aoitechnicien;
+package fr.java.aoitechnicien.Service;
 
 import android.app.NotificationManager;
 import android.app.Service;
@@ -18,7 +18,18 @@ public class ServiceNetwork extends Service {
     final static String CONNECTIVITY_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
     NotificationManager manager ;
     TextView textSplash;
+    private ConnexionHelper connexionHelper;
+    private String s_login;
+    private String s_password;
+    private BroadcastReceiver receiver;
 
+    // -- SHAREDPREFERENCES
+    /*SharedHelper sharedhelper;*/
+    // -- SESSION INFORMATION
+    /*public static final String sessionKey = "sessionKey";
+    public static final String tokenKey = "tokenKey";
+    public static final String loginKey = "loginKey";
+    public static final String pswKey = "pswKey";*/
 
     @Nullable
     @Override
@@ -35,49 +46,67 @@ public class ServiceNetwork extends Service {
     }, 0, 100000);*/
 
 
+    public ServiceNetwork() {
+        // Default constructor
+    }
+
+    public ServiceNetwork(String login, String password) {
+        s_login = login;
+        s_password = password;
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e("NETWORK INFO ::SN ::", "START::SERVICE");
+
+        if (intent.hasExtra("login")) {
+            s_login = intent.getStringExtra("login");
+        }
+        if (intent.hasExtra("password")) {
+            s_password = intent.getStringExtra("password");
+        }
+
+        connexionHelper = new ConnexionHelper();
+        Log.i("DEBUG_NETWORK", "START::SERVICE");
         // Let it continue running until it is stopped.
         Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
-        BroadcastReceiver receiver = new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
 
 
             @Override
             public void onReceive(Context context, Intent intent) {
+                //sharedhelper = new SharedHelper((Activity) context, sessionKey);
                 String action = intent.getAction();
                 if (CONNECTIVITY_CHANGE_ACTION.equals(action)) {
                     //check internet connection
-                    if (!ConnexionHelper.isConnectedOrConnecting(context)) {
+                    if (!connexionHelper.isConnectedOrConnecting(context)) {
                         if (context != null) {
                             boolean show = false;
-                            if (ConnexionHelper.lastNoConnectionTs == -1) {//first time
+                            if (connexionHelper.lastNoConnectionTs == -1) {//first time
                                 show = true;
-                                ConnexionHelper.lastNoConnectionTs = System.currentTimeMillis();
+                                connexionHelper.lastNoConnectionTs = System.currentTimeMillis();
                             } else {
-                                if (System.currentTimeMillis() - ConnexionHelper.lastNoConnectionTs > 1000) {
+                                if (System.currentTimeMillis() - connexionHelper.lastNoConnectionTs > 1000) {
                                     show = true;
-                                    ConnexionHelper.lastNoConnectionTs = System.currentTimeMillis();
+                                    connexionHelper.lastNoConnectionTs = System.currentTimeMillis();
                                 }
                             }
 
-                            if (show && ConnexionHelper.isOnline) {
-                                ConnexionHelper.isOnline = false;
-                                Log.e("NETWORK INFO :: lost ::","Connection lost");
-                                ConnexionHelper.isStopedThread(context);
+                            if (show && connexionHelper.isOnline) {
+                                connexionHelper.isOnline = false;
+                                Log.e("DEBUG_NETWORK","Connection lost");
+                                connexionHelper.isStopedThread(context);
                                 Toast.makeText(context, "Service Disconnected", Toast.LENGTH_SHORT).show();
                                 //manager.cancelAll();
                             }
                         }
                     } else {
-                        Log.e("NETWORK INFO ::SN ::","Connected");
-                        ConnexionHelper.isStartedThread(context);
+                        Log.i("DEBUG_NETWORK","Connected :: "+s_login+" :: "+s_password);
+                        connexionHelper.isStartedThread(context, s_login, s_password);
                         Toast.makeText(context, "Service Connected", Toast.LENGTH_SHORT).show();
                         // Perform your actions here
-                        ConnexionHelper.isOnline = true;
+                        connexionHelper.isOnline = true;
                     }
                 }
             }
@@ -89,6 +118,11 @@ public class ServiceNetwork extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        try{
+            if(receiver!=null)
+                unregisterReceiver(receiver);
+
+        }catch(Exception e){}
         Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
     }
 }

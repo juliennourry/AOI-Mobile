@@ -48,4 +48,11 @@ dependencies {
 
     // -- QRCODE SCANNER
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+
+    // -- BCRYPT
+    implementation 'org.springframework.security:spring-security-crypto:5.7.2'
+    implementation 'commons-logging:commons-logging-api:1.1'
+
+    // -- SIGN
+
 }

@@ -1,4 +1,4 @@
-package fr.java.aoitechnicien;
+package fr.java.aoitechnicien.Models;
 
 public class ModelUser {
     private int id;

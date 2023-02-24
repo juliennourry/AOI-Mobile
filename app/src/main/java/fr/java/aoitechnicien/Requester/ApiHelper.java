@@ -1,13 +1,8 @@
-package fr.java.aoitechnicien;
+package fr.java.aoitechnicien.Requester;
 
-import android.app.Activity;
-import android.util.Log;
-
+import fr.java.aoitechnicien.Function.SharedHelper;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -24,11 +19,10 @@ public class ApiHelper {
 
 
     public static InterfaceApi getApi(String strToken){
-        //Log.e("APISYNC", "NOBEARER :: " + strToken);
 
         Interceptor intercept = new AuthInterceptor(strToken);
 
-        if(retrofit == null){
+        //if(retrofit == null){
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
@@ -36,10 +30,10 @@ public class ApiHelper {
                             .addInterceptor(intercept)
                             .build())
                     .build();
-        }
-        if(api == null){
+        //}
+        //if(api == null){
             api = retrofit.create(InterfaceApi.class);
-        }
+        //}
         return api;
     }
 

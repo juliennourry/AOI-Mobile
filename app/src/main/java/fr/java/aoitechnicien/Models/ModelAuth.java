@@ -1,4 +1,4 @@
-package fr.java.aoitechnicien;
+package fr.java.aoitechnicien.Models;
 
 public class ModelAuth {
     private String token;

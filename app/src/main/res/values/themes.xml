@@ -18,4 +18,9 @@
         <item name="android:windowEnterAnimation">@anim/box_slide_in_animation</item>
         <item name="android:windowExitAnimation">@anim/box_slide_out_animation</item>
     </style>
+
+    <style name="MyTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="colorControlActivated">#00ff00</item>
+    </style>
+
 </resources>

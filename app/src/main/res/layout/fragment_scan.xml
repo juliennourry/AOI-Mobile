@@ -89,14 +89,23 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:id="@+id/btnConnect"
+                    android:id="@+id/btnSearchItemUUID"
                     android:text="@string/btn_search_item"
                     android:textSize="18sp"
                     android:backgroundTint="@color/theme_color"
                     app:cornerRadius="10dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
+                    android:visibility="visible"
                     />
+
+                <ProgressBar
+                    android:id="@+id/progress_bar_search_item"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="30dp"
+                    android:visibility="gone" />
 
             </LinearLayout>
 

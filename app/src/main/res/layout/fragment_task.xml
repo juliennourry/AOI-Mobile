@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TaskFragment"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        android:divider="@drawable/empty_divider">
+
+        <TextView
+            android:id="@+id/frequency_name_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fréquence Label"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/theme_color"
+            />
+    </LinearLayout>
+
+    <ExpandableListView
+        android:id="@+id/groupTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+    </ExpandableListView>
+
+</LinearLayout>

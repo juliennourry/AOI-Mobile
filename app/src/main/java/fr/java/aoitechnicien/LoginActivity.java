@@ -5,20 +5,27 @@ import static android.text.TextUtils.isEmpty;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.java.aoitechnicien.Function.SharedHelper;
+import fr.java.aoitechnicien.Function.ToastHelper;
+import fr.java.aoitechnicien.Models.ModelAuth;
+import fr.java.aoitechnicien.Requester.ApiHelper;
+import fr.java.aoitechnicien.Requester.ApiSync;
+import fr.java.aoitechnicien.Requester.DatabaseHelper;
+import fr.java.aoitechnicien.Service.ServiceNetwork;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -32,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText login;
     EditText psw;
     Button btnConnect;
+    ProgressBar progressBar;
     ApiSync apisync;
 
     // -- SESSION INFORMATION
@@ -61,38 +69,58 @@ public class LoginActivity extends AppCompatActivity {
         sharedhelper = new SharedHelper(LoginActivity.this, sessionKey);
         String extra_sync = getIntent().getStringExtra("extra_sync");
 
-        if (extra_sync.equals("false")) {
-            sharedhelper.stockParam(tokenKey, "");
-            sharedhelper.stockParam(loginKey, "");
-            sharedhelper.stockParam(pswKey, "");
-        }
-
 
         // -- CONTROL USER INFORMATION
         if (!isEmpty(sharedhelper.getParam(tokenKey)) && !isEmpty(sharedhelper.getParam(loginKey)) && !isEmpty(sharedhelper.getParam(pswKey)) && extra_sync.equals("true")) {
 
-            // -- HOME PAGE
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            overridePendingTransition(R.anim.slide_out_animation, R.anim.slide_in_animation);
-            startActivity(intent);
-            finish();
+
+            if(databaseHelper.isConnect(database, sharedhelper.getParam(loginKey).trim(), sharedhelper.getParam(pswKey).trim())){
+
+                sharedhelper.stockParam(loginKey, sharedhelper.getParam(loginKey));
+                sharedhelper.stockParam(pswKey, sharedhelper.getParam(pswKey));
+
+                // -- SYNC DATA LOOP
+                Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+                intentService.putExtra("login", sharedhelper.getParam(loginKey).trim());
+                intentService.putExtra("password", sharedhelper.getParam(pswKey).trim());
+                startService(intentService);
+
+                // -- HOME PAGE
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                overridePendingTransition(R.anim.slide_out_animation, R.anim.slide_in_animation);
+                startActivity(intent);
+                finish();
+
+            } else {
+                Log.e("DEBUG_LOGIN", " AutoAuth failed ");
+            }
+
 
         } else {
+            Log.i("DEBUG_LOGIN", "STEP::2");
             // -- CONNECT VIEW PAGE
             setContentView(R.layout.activity_login);
 
             // -- ITEM PAGE
             login = findViewById(R.id.inputLogin);
-            if(sharedhelper.getParam(loginKey).trim().isEmpty()) {
+            if(!sharedhelper.getParam(loginKey).trim().isEmpty()) {
                 login.setText(sharedhelper.getParam(loginKey));
             }
             psw = findViewById(R.id.inputPsw);
             btnConnect = findViewById(R.id.btnConnect);
+            progressBar = findViewById(R.id.progress_bar);
 
             // -- ACTION :: CONNEXION
             btnConnect.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    progressBar.setVisibility(View.VISIBLE);
+                    btnConnect.setVisibility(View.GONE);
+
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(LoginActivity.INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
                     JSONObject jsonObject = new JSONObject();
                     try {
                         jsonObject.put("login", login.getText().toString());
@@ -102,7 +130,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonObject.toString());
-
                     if(extra_sync.equals("false")) {
                         // -- CONNECT WITH API
                         ApiHelper.getApi("").auth(body).enqueue(new Callback<ModelAuth>() {
@@ -110,8 +137,8 @@ public class LoginActivity extends AppCompatActivity {
                                 if (response.isSuccessful()) {
                                     if (!response.body().getAuth().trim().isEmpty()) {
                                         sharedhelper.stockParam(tokenKey, response.body().getAuth());
-                                        sharedhelper.stockParam(loginKey, login.getText().toString());
-                                        sharedhelper.stockParam(pswKey, psw.getText().toString());
+                                        sharedhelper.stockParam(loginKey, login.getText().toString().trim());
+                                        sharedhelper.stockParam(pswKey, psw.getText().toString().trim());
                                         toastHelper.LoadToasted("Connexion réussie");
 
 
@@ -119,23 +146,40 @@ public class LoginActivity extends AppCompatActivity {
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
-                                                Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+                                                /*Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
                                                 intentService.putExtra("extra_sync", "true");
-                                                startService(intentService);
+                                                startService(intentService);*/
 
                                                 new Handler().postDelayed(new Runnable() {
                                                     @Override
                                                     public void run() {
                                                         if(databaseHelper.isSync(database)) {
+                                                            progressBar.setVisibility(View.GONE);
+                                                            btnConnect.setVisibility(View.VISIBLE);
+
+                                                            // -- SYNC DATA LOOP
+                                                            Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+                                                            intentService.putExtra("login", sharedhelper.getParam(loginKey));
+                                                            intentService.putExtra("password", sharedhelper.getParam(pswKey));
+                                                            startService(intentService);
+
                                                             // -- HOME PAGE
                                                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                                             startActivity(intent);
                                                             overridePendingTransition(R.anim.slide_out_animation, R.anim.slide_in_animation);
                                                             finish();
                                                         } else {
-                                                            //toastHelper.LoadToasted("Synchronisation en cours ...");
-                                                            apisync = new ApiSync(sharedhelper.getParam(tokenKey));
-                                                            if(apisync.syncUser() && apisync.syncItem()) {
+                                                            apisync = new ApiSync(sharedhelper.getParam(tokenKey), getBaseContext());
+                                                            if(apisync.syncUser(sharedhelper.getParam(tokenKey)) && apisync.syncItem()) {
+                                                                // -- SYNC DATA LOOP
+                                                                Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+                                                                intentService.putExtra("login", sharedhelper.getParam(loginKey));
+                                                                intentService.putExtra("password", sharedhelper.getParam(pswKey));
+                                                                startService(intentService);
+
+                                                                progressBar.setVisibility(View.GONE);
+                                                                btnConnect.setVisibility(View.VISIBLE);
+
                                                                 // -- HOME PAGE
                                                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                                                 startActivity(intent);
@@ -151,19 +195,44 @@ public class LoginActivity extends AppCompatActivity {
                                         }, SPLASH_TIMER);
 
                                     } else {
-                                        //Log.d("APIRESPONSE", "Token Empty ... ");
+                                        toastHelper.LoadToasted("Erreur du serveur distant, veuillez réessayer ...");
+                                        progressBar.setVisibility(View.GONE);
+                                        btnConnect.setVisibility(View.VISIBLE);
+
                                     }
                                 } else {
-                                    toastHelper.LoadToasted("Erreur de connexion, veuillez réessayer ...");
+                                    toastHelper.LoadToasted("Erreur de connexion ou identifiant incorrect, veuillez réessayer ...");
+                                    progressBar.setVisibility(View.GONE);
+                                    btnConnect.setVisibility(View.VISIBLE);
                                 }
                             }
                             public void onFailure(Call<ModelAuth> call, Throwable t) {
-                                toastHelper.LoadToasted("Erreur de connexion, veuillez réessayer ...");
+                                toastHelper.LoadToasted("Echec de connexion au serveur distant, veuillez réessayer ultérieurement...");
+                                progressBar.setVisibility(View.GONE);
+                                btnConnect.setVisibility(View.VISIBLE);
                             }
                         });
 
                     } else {
+                        Log.i("DEBUG_LOGIN", "STEP::4");
+                        // -- IMPOSSIBLE BECAUSE EXTRA SYNC IS ALWAYS FALSE HERE
                         // -- CONNECT WITH BDD
+                        /*Log.e("THREAD_INFO", " BDD YES Connect ");
+                        if(databaseHelper.isConnect(database, sharedhelper.getParam(loginKey), sharedhelper.getParam(pswKey))){
+
+                            sharedhelper.stockParam(loginKey, sharedhelper.getParam(loginKey));
+                            sharedhelper.stockParam(pswKey, sharedhelper.getParam(pswKey));
+
+
+
+                            Log.i("DTB_SYNC", " Auth success ");
+                            progressBar.setVisibility(View.GONE);
+                            btnConnect.setVisibility(View.VISIBLE);
+                        } else {
+                            Log.i("DTB_SYNC", " Auth failed ");
+                            progressBar.setVisibility(View.GONE);
+                            btnConnect.setVisibility(View.VISIBLE);
+                        }*/
                     }
 
 
