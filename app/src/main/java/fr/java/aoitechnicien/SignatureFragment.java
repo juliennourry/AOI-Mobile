@@ -9,7 +9,10 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 import fr.java.aoitechnicien.Function.ToastHelper;
@@ -56,6 +60,7 @@ public class SignatureFragment extends DialogFragment {
         clientName = (EditText) fRoot.findViewById(R.id.client_name);
 
         signView = (SignView) fRoot.findViewById(R.id.signature_view);
+        signView.setDrawingCacheEnabled(true);
 
         // -- START CREATE DB
         databaseHelper = new DatabaseHelper(fRoot.getContext());
@@ -83,15 +88,35 @@ public class SignatureFragment extends DialogFragment {
         withoutSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    showSignNotDialog(fRoot.getContext());
+
+                mapIntervention.put("signData", "");
+                mapIntervention.put("signName", String.valueOf(clientName.getText()));
+                    showSignNotDialog(fRoot.getContext(), database);
             }
         });
 
         confirmSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //signatureBitmap = signView.getSignatureBitmap();
-                if(clientName.getText().length() == 0) {
+
+                // -- GET Base64 sign
+                //Bitmap bitmap = Bitmap.createBitmap(signView.getWidth(), signView.getHeight(), Bitmap.Config.ARGB_8888);
+                //signatureBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false);
+                signatureBitmap = signView.getDrawingCache();
+                Log.e("DEBUG_sBitMap", signatureBitmap.toString());
+                // Convert the Bitmap to a byte array
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                signatureBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] byteArray = baos.toByteArray();
+                Log.e("DEBUG_sBitMap", byteArray.toString());
+                // Encode the byte array as Base64
+                String base64String = Base64.encodeToString(byteArray, Base64.DEFAULT);
+                Log.e("DEBUG_sBitMap", base64String);
+                mapIntervention.put("signData", base64String);
+                mapIntervention.put("signName", String.valueOf(clientName.getText()));
+
+
+                if(clientName.getText().length() == 0 && base64String.length() == 0) {
                     toastHelper.LoadToasted("Veuillez renseigner le nom et la signature du client.");
                 } else {
                     showSignConfirmationDialog(fRoot.getContext(), database);
@@ -112,9 +137,10 @@ public class SignatureFragment extends DialogFragment {
                 .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Perform OK action
-                        mapIntervention.put("signName", String.valueOf(clientName.getText()));
                         if(databaseHelper.insertIntervention(database, mapIntervention)) {
                             Log.i("DEBUG_INTERVENTION", "Insert new Intervention SUCCESS");
+                            dismiss();
+                            redirectionBtnPage();
                         } else {
                             Log.e("DEBUG_INTERVENTION", "Insert new Intervention FAIL");
                         }
@@ -131,13 +157,20 @@ public class SignatureFragment extends DialogFragment {
     }
 
 
-    public void showSignNotDialog(Context context) {
+    public void showSignNotDialog(Context context, SQLiteDatabase database) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("Enregistrer sans signature?")
                 .setCancelable(false)
                 .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // Perform the positive action, such as deleting the item
+                        // Perform the positive OK
+                        if(databaseHelper.insertIntervention(database, mapIntervention)) {
+                            Log.i("DEBUG_INTERVENTION", "Insert new Intervention SUCCESS");
+                            dismiss();
+                            redirectionBtnPage();
+                        } else {
+                            Log.e("DEBUG_INTERVENTION", "Insert new Intervention FAIL");
+                        }
                     }
                 })
                 .setNegativeButton("Non", new DialogInterface.OnClickListener() {
@@ -148,5 +181,14 @@ public class SignatureFragment extends DialogFragment {
                 });
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    public void redirectionBtnPage() {
+        toastHelper.LoadToasted("Nouvelle intervention enregistrée.");
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout_item, new ItemButtonFragment());
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
     }
 }

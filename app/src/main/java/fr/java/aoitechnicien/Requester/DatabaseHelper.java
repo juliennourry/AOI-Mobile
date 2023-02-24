@@ -367,6 +367,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("startDate", map.get("startDate"));
         values.put("endDate", map.get("endDate"));
         values.put("signName", map.get("signName"));
+        values.put("signData", map.get("signData"));
         values.put("coordinates", map.get("coordinates"));
 
         try {
