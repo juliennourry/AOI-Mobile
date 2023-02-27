@@ -6,6 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.text.SimpleDateFormat;
@@ -302,6 +307,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    public List<JSONObject> getInterventions(SQLiteDatabase db, String id) {
+        List<JSONObject> interventionList = new ArrayList<>();
+        Cursor cursor = db.rawQuery("SELECT * FROM intervention WHERE id_sync = ?", new String[]{id});
+        if (cursor.moveToFirst()) {
+            do {
+                JSONObject obj = new JSONObject();
+                try {
+                    obj.put("tempId", cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+                    obj.put("startDate", cursor.getString(cursor.getColumnIndexOrThrow("startDate")));
+                    obj.put("endDate", cursor.getString(cursor.getColumnIndexOrThrow("endDate")));
+                    obj.put("note", cursor.getString(cursor.getColumnIndexOrThrow("note")));
+                    obj.put("type", "0");
+                    obj.put("coordinates", cursor.getString(cursor.getColumnIndexOrThrow("coordinates")));
+                    obj.put("fkUser", "/api/users/"+cursor.getString(cursor.getColumnIndexOrThrow("fkUser")));
+                    obj.put("fkItemsite", "/api/item_sites/"+cursor.getString(cursor.getColumnIndexOrThrow("fkItemsite")));
+                    obj.put("status", 0);
+                    obj.put("stop", cursor.getInt(cursor.getColumnIndexOrThrow("stop"))== 1);
+                    obj.put("createdAt", cursor.getString(cursor.getColumnIndexOrThrow("startDate")));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                interventionList.add(obj);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return interventionList;
+    }
+
     public Boolean checkAccessItem(SQLiteDatabase db, String idUser, String emailUser) {
         String data = null;
         Cursor cursor = db.rawQuery("SELECT * FROM user WHERE id_sync=? AND email =?", new String[]{idUser, emailUser});
@@ -332,6 +365,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
     }
+
+    public Boolean updateIntervention(SQLiteDatabase db, Integer idInter, Integer idRemote) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put("id_sync", idRemote);
+            db.update("intervention", values, "id = ?", new String[]{idInter.toString()});
+            return true;
+        } catch (Exception e) {
+            Log.e("DEBUG_THREAD_INFO_UpdateIntervention", String.valueOf(e));
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     public Boolean checkUuidItem(SQLiteDatabase db, String uuid) {
         Boolean result = false;
