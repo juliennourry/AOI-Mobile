@@ -3,6 +3,7 @@ package fr.java.aoitechnicien.Requester;
 import java.util.List;
 
 import fr.java.aoitechnicien.Models.ModelApiItem;
+import fr.java.aoitechnicien.Models.ModelApiOfftime;
 import fr.java.aoitechnicien.Models.ModelApiSite;
 import fr.java.aoitechnicien.Models.ModelApiUser;
 import fr.java.aoitechnicien.Models.ModelAuth;
@@ -26,4 +27,7 @@ public interface InterfaceApi {
 
     @GET("/api/sites/{id}")
     Call<ModelApiSite> getSite(@Path("id") int idSite);
+
+    @GET("/api/offtimes")
+    Call<List<ModelApiOfftime>> getOfftime();
 }

@@ -8,11 +8,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import fr.java.aoitechnicien.Models.ModelApiItem;
+import fr.java.aoitechnicien.Models.ModelApiOfftime;
 import fr.java.aoitechnicien.Models.ModelApiSite;
 import fr.java.aoitechnicien.Models.ModelApiUser;
 import fr.java.aoitechnicien.Models.ModelCrossSiteContrat;
@@ -23,7 +27,7 @@ import fr.java.aoitechnicien.Models.ModelSite;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "aoi_tech.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
     String sql;
 
     public DatabaseHelper(Context context) {
@@ -44,6 +48,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sql = "CREATE TABLE IF NOT EXISTS site (id INTEGER PRIMARY KEY AUTOINCREMENT, id_sync INTEGER NOT NULL, label TEXT NOT NULL, contrat TEXT NOT NULL, tiers TEXT NOT NULL, createdAt DATETIME NOT NULL, deletedAt DATETIME)";
         db.execSQL(sql);
         sql = "CREATE TABLE IF NOT EXISTS intervention (id INTEGER PRIMARY KEY AUTOINCREMENT, id_sync INTEGER, fkItemsite INTEGER, fkUser INTEGER, note TEXT, type TEXT, stop TEXT, startDate DATETIME, endDate DATETIME, signName TEXT, signData TEXT, coordinates TEXT,  createdAt TEXT)";
+        db.execSQL(sql);
+        sql = "CREATE TABLE IF NOT EXISTS offtime (id INTEGER PRIMARY KEY AUTOINCREMENT, id_sync INTEGER, fk_itemsite INTEGER, startAt DATETIME, endAt DATETIME, status TEXT, createdAt DATETIME NOT NULL, send TEXT)";
         db.execSQL(sql);
     }
 
@@ -67,6 +73,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.execSQL(sql);
             sql = "DROP TABLE IF EXISTS intervention";
             db.execSQL(sql);
+            sql = "DROP TABLE IF EXISTS offtime";
+            db.execSQL(sql);
             onCreate(db);
         }
     }
@@ -85,6 +93,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sql = "DROP TABLE IF EXISTS site";
         db.execSQL(sql);
         sql = "DROP TABLE IF EXISTS intervention";
+        db.execSQL(sql);
+        sql = "DROP TABLE IF EXISTS offtime";
         db.execSQL(sql);
         onCreate(db);
         return true;
@@ -262,6 +272,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean verifyAppareilAccess(SQLiteDatabase db, String id_sync) {
+
+        try {
+            Cursor cursor = db.rawQuery("SELECT * FROM appareil WHERE id_sync = ?", new String[]{id_sync});
+            if (cursor.getCount() > 0) {
+                cursor.close();
+                return true;
+            } else {
+                cursor.close();
+                return false;
+            }
+        } catch (Exception e) {
+            Log.e("DEBUG_THREAD_INFO_verifyAppareilAccess", String.valueOf(e));
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public String getSyncDTB(SQLiteDatabase db, String columnName) {
         String data = null;
         Cursor cursor = db.rawQuery("SELECT * FROM sync WHERE id='1'", null);
@@ -391,5 +419,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return idsync;
     }
 
+    public boolean verifyAndInsertOfftime(SQLiteDatabase db, ModelApiOfftime offtime) {
+        Calendar calendar = Calendar.getInstance();
+        Date currentDate = calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String createdAt = dateFormat.format(currentDate);
+
+        /*try {
+            ContentValues values = new ContentValues();
+            values.put("id_sync", offtime.getId());
+            values.put("startAt", offtime.getStartAt());
+            values.put("endAt", offtime.getEndAt());
+            values.put("status", offtime.getStatus());
+            values.put("createdAt", createdAt);
+            values.put("fk_itemsite", offtime.getFkItemsite());
+
+            Cursor cursor = db.rawQuery("SELECT * FROM offtime WHERE id_sync = ?", new String[]{String.valueOf(offtime.getId())});
+            if (cursor.getCount() > 0 && cursor.getString(cursor.getColumnIndexOrThrow("send")).equals("0")) {
+                db.update("sync", values, "id = 1", null);
+            } else if(cursor.getCount() > 0 && cursor.getString(cursor.getColumnIndexOrThrow("send")).equals("1")) {
+
+            } else {
+                try {
+                    db.insertOrThrow("sync", null, values);
+                } catch(Exception e) {
+                    Log.e("DEBUG_THREAD_INFO_VerifyAndInsert", e.toString());
+                }
+            }
+            cursor.close();
+
+            return true;
+        } catch (Exception e) {
+            Log.e("DEBUG_THREAD_INFO_VerifyAndInsert", String.valueOf(e));
+            e.printStackTrace();
+            return false;
+        }*/
+        return true;
+    }
 
 }

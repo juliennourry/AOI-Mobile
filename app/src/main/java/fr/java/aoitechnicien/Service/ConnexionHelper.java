@@ -110,6 +110,12 @@ public class ConnexionHelper {
                                     Thread.sleep(2000);
                                 } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
 
+                                // -- SYNC OFFTIME
+                                do {
+                                    apisync.syncOfftime(databaseHelper.getSyncDTB(database, "token"));
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
                                 // -- END SYNC
                                 dateSync = databaseHelper.getSyncDTB(database, "createdAt");
                                 c_auth = true;
