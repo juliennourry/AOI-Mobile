@@ -727,7 +727,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Boolean checkUuidItem(SQLiteDatabase db, String uuid) {
         Boolean result = false;
 //        Cursor cursor = db.rawQuery("SELECT * FROM appareil WHERE access = '1' AND uuid = ? AND deletedAt IS NULL", new String[]{uuid});
-        Cursor cursor = db.rawQuery("SELECT * FROM appareil WHERE desactivatedAt IS NULL", new String[]{uuid});
+        Cursor cursor = db.rawQuery("SELECT * FROM appareil WHERE desactivatedAt IS NULL AND uuid = ?", new String[]{uuid});
         if (cursor.getCount() > 0) {
             result = true;
         }
