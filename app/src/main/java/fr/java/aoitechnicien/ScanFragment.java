@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.hardware.Camera;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
@@ -14,7 +15,9 @@ import androidx.fragment.app.Fragment;
 import android.os.Handler;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -48,6 +51,7 @@ public class ScanFragment extends Fragment {
     private ProgressBar progressBarSearchItem;
     private final int CAMERA_PERMISSION_REQUEST_CODE = 100001;
     private final int FINE_LOCATION_PERMISSION_REQUEST_CODE = 200002;
+    private GestureDetector gestureDetector;
     ToastHelper toastHelper;
 
     @Override
@@ -79,8 +83,10 @@ public class ScanFragment extends Fragment {
                         .build();
         cameraSource = new CameraSource
                 .Builder(fRoot.getContext(), barcodeDetector)
-                .setRequestedPreviewSize(640, 480)
+                .setRequestedPreviewSize(640, 640)
+                .setAutoFocusEnabled(true)
                 .build();
+
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
 
             @Override
@@ -135,7 +141,7 @@ public class ScanFragment extends Fragment {
             public void onClick(View view) {
 
                 if(databaseHelper.checkUuidItem(database, barcodeInfo.getText().toString())) {
-                    toastHelper.LoadToasted("Accès autorisé.");
+                    toastHelper.LoadToasted(fRoot.getResources().getString(R.string.access));
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -148,7 +154,7 @@ public class ScanFragment extends Fragment {
                     intent.putExtra("uuid", barcodeInfo.getText().toString().trim());
                     startActivity(intent);
                 } else {
-                    toastHelper.LoadToasted("Appareil inexistant ou vos droits d'accès sont restreints.");
+                    toastHelper.LoadToasted(fRoot.getResources().getString(R.string.no_access));
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -200,4 +206,5 @@ public class ScanFragment extends Fragment {
         }
         return true;
     }
+
 }

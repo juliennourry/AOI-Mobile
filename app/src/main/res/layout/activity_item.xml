@@ -11,7 +11,18 @@
     <WebView
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_height="200dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/show_map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/open_map"
+        android:gravity="end"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:layout_margin="10dp"/>
 
     <LinearLayout
         android:id="@+id/header"
@@ -31,7 +42,7 @@
                 android:id="@+id/title_item_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Asc Parking"
+                android:text="@string/no_app"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:paddingRight="15dp"
@@ -81,7 +92,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tiers : "
+                        android:text="@string/call_tiers"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:textColor="@color/theme_color"/>
@@ -90,7 +101,7 @@
                         android:id="@+id/label_tiers_item"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Société xyz"
+                        android:text="@string/no_soc"
                         android:textSize="16sp"/>
 
                 </LinearLayout>
@@ -103,7 +114,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Site : "
+                        android:text="@string/call_site"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:textColor="@color/theme_color"/>
@@ -112,7 +123,7 @@
                         android:id="@+id/label_site_item"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Carré Azalée"
+                        android:text="@string/no_site"
                         android:textSize="16sp"/>
 
                 </LinearLayout>
@@ -126,7 +137,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Adresse : "
+                        android:text="@string/call_address"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:textColor="@color/theme_color"/>
@@ -134,7 +145,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="18 rue chemin Azalée"
+                        android:text="@string/no_address"
                         android:textSize="16sp"/>
 
                 </LinearLayout>
@@ -147,7 +158,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Catégorie : "
+                        android:text="@string/call_category"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:textColor="@color/theme_color"/>
@@ -156,7 +167,7 @@
                         android:id="@+id/label_category_item"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ascenseur"
+                        android:text="@string/no_category"
                         android:textSize="16sp"/>
 
                 </LinearLayout>
@@ -170,7 +181,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Type d'appareil : "
+                        android:text="@string/call_type"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:textColor="@color/theme_color"/>
@@ -178,7 +189,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cabine intérieure"
+                        android:text="@string/no_type"
                         android:textSize="16sp"/>
 
                 </LinearLayout>
@@ -200,7 +211,7 @@
                         android:id="@+id/label_dateservice_item"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="25 Janvier 2023"
+                        android:text="@string/no_start_service"
                         android:textSize="16sp"/>
 
                 </LinearLayout>
@@ -214,7 +225,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Etat : "
+                        android:text="@string/call_status"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         android:textColor="@color/theme_color"/>
@@ -223,7 +234,7 @@
                         android:id="@+id/label_status_item"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="En ligne"
+                        android:text="@string/offline"
                         android:textColor="@color/green"
                         android:textSize="16sp"
                         android:textStyle="bold"/>
@@ -233,18 +244,11 @@
 
         </LinearLayout>
 
-
     </LinearLayout>
-
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/frame_layout_item" />
-
-
-
-
-
 
 </LinearLayout>

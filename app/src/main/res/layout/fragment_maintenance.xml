@@ -8,6 +8,16 @@
     android:layout_marginRight="20dp"
     android:layout_marginLeft="20dp">
 
+
+    <LinearLayout
+        android:id="@+id/linear_layout_maintenance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/linear_layout_frequency"
         android:layout_width="match_parent"
@@ -17,96 +27,30 @@
 
     </LinearLayout>
 
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:showDividers="middle"
-        android:divider="@drawable/empty_divider"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/frequency2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Visite semestrielle"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/theme_color"
-            />
-
-        <TextView
-            android:id="@+id/frequency_size_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0/7"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/theme_color"
-            />
-    </LinearLayout>
-
-    <ExpandableListView
-        android:id="@+id/groupList2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:visibility="gone">
-    </ExpandableListView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:showDividers="middle"
-        android:divider="@drawable/empty_divider"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/frequency3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Visite annuelle"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/theme_color"
-            />
-
-        <TextView
-            android:id="@+id/frequency_size_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0/5"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/theme_color"
-            />
-    </LinearLayout>
-
-    <ExpandableListView
-        android:id="@+id/groupList3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:visibility="gone">
-    </ExpandableListView>
-
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:id="@+id/btnValidIntervention"
-        android:text="Enregistrer"
+        android:id="@+id/btnValidMaintenance"
+        android:text="@string/save"
         android:textSize="18sp"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:backgroundTint="@color/theme_color"
         app:cornerRadius="10dp" />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:id="@+id/btnRetourMaintenance"
+        android:text="@string/btn_return"
+        android:textSize="18sp"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/gray"
+        style="@style/Widget.AppCompat.Button.Borderless"/>
 
 </LinearLayout>

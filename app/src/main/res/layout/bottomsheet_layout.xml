@@ -40,7 +40,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Intervention"
+                android:text="@string/interventions"
                 android:textColor="@color/theme_color"
                 android:layout_marginLeft="30dp"
                 android:textSize="16sp" />
@@ -67,7 +67,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Commande"
+            android:text="@string/orders"
             android:textColor="@color/theme_color"
             android:layout_marginLeft="30dp"
             android:textSize="16sp" />

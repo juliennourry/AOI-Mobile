@@ -14,6 +14,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +25,17 @@ import android.widget.Toast;
 
 import fr.java.aoitechnicien.Function.SharedHelper;
 import fr.java.aoitechnicien.Requester.DatabaseHelper;
+import fr.java.aoitechnicien.Service.LifeTime;
 import fr.java.aoitechnicien.Service.ServiceNetwork;
 import fr.java.aoitechnicien.databinding.ActivityHomeBinding;
 
+
 public class HomeActivity extends AppCompatActivity {
 
+
+
     ActivityHomeBinding binding;
-    SharedHelper sharedhelper;
+    SharedHelper sharedhelper, sharedhelperResume, sharedhelperPause;
     ServiceNetwork servicenetwork;
 
     // -- SESSION INFORMATION
@@ -40,6 +45,51 @@ public class HomeActivity extends AppCompatActivity {
     public static final String pswKey = "pswKey";
     // -- DB
     private static DatabaseHelper databaseHelper;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        LifeTime myApp = (LifeTime) getApplication();
+        boolean isForeground = myApp.isAppInForeground();
+
+        // -- SESSION INFORMATION
+        sharedhelperResume = new SharedHelper(HomeActivity.this, sessionKey);
+
+        if (isForeground) {
+            // -- SYNC DATA LOOP
+            Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+            intentService.putExtra("login", sharedhelperResume.getParam(loginKey).trim());
+            intentService.putExtra("password", sharedhelperResume.getParam(pswKey).trim());
+            Log.i("DEBUG_HOME_LIFETIME_RESUME", "TRUE");
+            stopService(intentService);
+            startService(intentService);
+        } else {
+            // -- SYNC DATA LOOP
+            Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+            intentService.putExtra("login", sharedhelperResume.getParam(loginKey).trim());
+            intentService.putExtra("password", sharedhelperResume.getParam(pswKey).trim());
+            Log.i("DEBUG_HOME_LIFETIME_RESUME", "FALSE");
+            stopService(intentService);
+            //Toast.makeText(this, "Service stoppé", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // -- SESSION INFORMATION
+        sharedhelperPause = new SharedHelper(HomeActivity.this, sessionKey);
+
+        // -- SYNC DATA LOOP
+        Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+        intentService.putExtra("login", sharedhelperPause.getParam(loginKey).trim());
+        intentService.putExtra("password", sharedhelperPause.getParam(pswKey).trim());
+        Log.i("DEBUG_HOME_LIFETIME_PAUSE", "TRUE");
+        stopService(intentService);
+        //Toast.makeText(this, "Service stoppé", Toast.LENGTH_LONG).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +117,16 @@ public class HomeActivity extends AppCompatActivity {
                     replaceFragment(new HomeFragment());
                     break;
                 case R.id.power_nav:
-                    showDeconnectDialog(this, database);
+                    //showDeconnectDialog(this, database);
+                    replaceFragment(new InformationFragment());
                     break;
                 case R.id.sync_nav:
                     showResyncDialog(this, database);
                     break;
                 case R.id.gestion_nav:
-                    replaceFragment(new HomeFragment());
+                    //replaceFragment(new HomeFragment());
+
+                    replaceFragment(new ScanFragment());
                     break;
                 default:
                     break;
@@ -83,15 +136,15 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         // -- Dialog View
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // -- OPEN DIALOG MENU BOTTOM
-                //showBottomDialog();
-
-                replaceFragment(new ScanFragment());
-            }
-        });
+//        binding.fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // -- OPEN DIALOG MENU BOTTOM
+//                //showBottomDialog();
+//
+//                replaceFragment(new ScanFragment());
+//            }
+//        });
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -113,7 +166,7 @@ public class HomeActivity extends AppCompatActivity {
         cancelSlide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(HomeActivity.this, "Fermeture du menu", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, getResources().getString(R.string.close_menu), Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
         });
@@ -123,7 +176,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 dialog.dismiss();
                 replaceFragment(new HomeFragment());
-                Toast.makeText(HomeActivity.this, "Open intervention", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, getResources().getString(R.string.open_intervention), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -132,7 +185,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 dialog.dismiss();
                 replaceFragment(new HomeFragment());
-                Toast.makeText(HomeActivity.this, "Open order", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HomeActivity.this, getResources().getString(R.string.open), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -150,7 +203,7 @@ public class HomeActivity extends AppCompatActivity {
 
     public void showDeconnectDialog(Context context, SQLiteDatabase database) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Souhaitez-vous vous déconnecter?")
+        builder.setMessage(getResources().getString(R.string.logout))
                 .setCancelable(false)
                 .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -180,17 +233,21 @@ public class HomeActivity extends AppCompatActivity {
 
     public void showResyncDialog(Context context, SQLiteDatabase database) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Souhaitez-vous relancer le service de synchronisation?")
+        builder.setMessage(getResources().getString(R.string.reload_sync))
                 .setCancelable(false)
                 .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
                         // -- SYNC DATA LOOP
+                        Toast.makeText(context, R.string.loading_service, Toast.LENGTH_LONG).show();
                         Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
                         intentService.putExtra("login", sharedhelper.getParam(loginKey).trim());
                         intentService.putExtra("password", sharedhelper.getParam(pswKey).trim());
+                        Log.e("DEBUG_DESTROY_START", "TRUE");
                         stopService(intentService);
+                        //Toast.makeText(context, "Service stoppé", Toast.LENGTH_LONG).show();
                         startService(intentService);
+                        Toast.makeText(context, R.string.service_online, Toast.LENGTH_SHORT).show();
 
                     }
                 })

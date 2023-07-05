@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/theme_color"
+    android:windowSoftInputMode="adjustResize"
+    tools:context=".InformationFragment">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="30dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="20dp"
+        android:background="@drawable/custom_edittext" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="24dp">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/baseline_info_24"
+                    app:tint="@color/theme_color"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_information"
+                    android:id="@+id/informationText"
+                    android:textSize="36sp"
+                    android:textAlignment="textStart"
+                    android:textStyle="bold"
+                    android:textColor="@color/theme_color"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_device"
+                        android:id="@+id/infoDevice"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_model"
+                        android:id="@+id/infoModel"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_sdk"
+                        android:id="@+id/infoSdk"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_database"
+                        android:id="@+id/infoDatabase"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_user"
+                        android:id="@+id/infoUser"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_sync"
+                        android:id="@+id/infoSync"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/info_url"
+                        android:id="@+id/infoUrl"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textColor="@color/gray"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/dataDevice"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/dataModel"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/dataSdk"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/dataDatabase"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/dataUser"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/dataSync"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/dataUrl"
+                        android:textSize="14sp"
+                        android:textAlignment="textStart"
+                        android:layout_marginBottom="5dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:id="@+id/btnDeconnexion"
+                android:text="@string/btn_deconnexion"
+                android:textSize="18sp"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/gray"
+                style="@style/Widget.AppCompat.Button.Borderless"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

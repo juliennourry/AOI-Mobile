@@ -61,12 +61,13 @@ public class ConnexionHelper {
         String token = null;
 
 
-
         // -- START CREATE DB
         databaseHelper = new DatabaseHelper(context);
         SQLiteDatabase database = databaseHelper.getWritableDatabase();
         dateSync = databaseHelper.getSyncDTB(database, "createdAt");
         ApiSync apisync = new ApiSync("0", context);
+
+        final Integer[] Counted = {0};
 
         t = new Thread() {
             @Override
@@ -75,18 +76,21 @@ public class ConnexionHelper {
                 isReturnThread = false;
                 if(!isStartedThread){
                     isStartedThread = true;
-
+                    c_auth = true;
                     try {
-                        while (!isInterrupted()) {
+                        while (isStartedThread) {
                             Thread.sleep(2000);
                             isReturnThread = true;
 
+
                             if(c_auth) {
                                 c_auth = false;
+                                Counted[0]++;
+                                Log.e("DEBUG_LOOP_THREAD", "COUNT::" + String.valueOf(Counted[0]));
 
                                 // -- LOOP GET AUTH TOKEN
                                 do {
-                                    apisync.syncAuth(login, password);
+                                    apisync.syncAuth(databaseHelper.getApiUrl(database, "url"), login, password);
                                     Thread.sleep(2000);
                                 } while (databaseHelper.getSyncDTB(database, "token") == null);
                                 databaseHelper.verifyAndInsert(database, databaseHelper.getSyncDTB(database, "token"));
@@ -100,19 +104,289 @@ public class ConnexionHelper {
 
                                 // -- SYNC USER
                                 do {
-                                    apisync.syncUser(databaseHelper.getSyncDTB(database, "token"));
+                                    apisync.syncUser(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback() {
+
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+
+                                                Log.i("DEBUG_API_THREAD", "SYNCUSER:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCUSER:: FAIL");
+                                            }
+                                        }
+                                    });
                                     Thread.sleep(2000);
                                 } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
 
                                 // -- SYNC ITEM
                                 do {
-                                    apisync.syncAppareil(databaseHelper.getSyncDTB(database, "token"), login);
+                                    apisync.syncAppareil(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), login, new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+
+                                                Log.i("DEBUG_API_THREAD", "SYNCAPPAREIL:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCAPPAREIL:: FAIL");
+                                            }
+                                        }
+                                    });
                                     Thread.sleep(2000);
                                 } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
 
-                                // -- SYNC OFFTIME
+                                // -- SYNC OFFTIME UP
                                 do {
-                                    apisync.syncOfftime(databaseHelper.getSyncDTB(database, "token"));
+                                    apisync.syncOfftimeUp(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCOFFTIMEUP:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCOFFTIMEUP:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC OFFTIME DOWN
+                                do {
+                                    apisync.syncOfftimeDown(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCOFFTIMEDOWN:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCOFFTIMEDOWN:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC INTERVENTIONS
+                                do {
+                                    apisync.syncInterventions(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCINTERVENTION:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCINTERVENTION:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC MOUNTAGE
+                                do {
+                                    apisync.syncMountage(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCMOUNTAGE:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCMOUNTAGE:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC MOUNTAGE DONE DOWN
+                                do {
+                                    apisync.syncMountageDone(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCMOUNTAGEDONE:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCMOUNTAGEDONE:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC MOUNTAGE DONE UP
+                                do {
+                                    apisync.syncMountageDoneUp(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCMOUNTAGEDONEUP:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCMOUNTAGEDONEUP:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC FREQUENCY by CATEGORY
+                                do {
+                                    apisync.syncFrequency(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCFREQUENCY:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCFREQUENCY:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC TASK and GROUPS
+                                do {
+                                    apisync.syncTask(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCTASK:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCTASK:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC TASKDONE
+                                do {
+                                    apisync.syncTaskDone(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCTASKDONE:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCTASKDONE:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC TASKDONE UP
+                                do {
+                                    apisync.syncLocalTaskDone(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), "0", "0", new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCTASKDONEPOST:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCTASKDONEPOST:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC RMFREQUENCY
+                                do {
+                                    apisync.syncRMFrequency(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCRMFREQUENCY:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCRMFREQUENCY:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC RMF UP
+                                do {
+                                    apisync.syncRMFUp(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCRMFUP:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCRMFUP:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC MAINTENANCE UP ONLY
+                                do {
+                                    apisync.syncMaintenances(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCMAINTENANCE:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCMAINTENANCE:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC BON INTERVENTION
+                                do {
+                                    apisync.syncBonIntervention(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCBONINTERVENTION:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCBONINTERVENTION:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC DEMANDE
+                                do {
+                                    apisync.syncDemand(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCDEMAND:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCDEMAND:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC NOTE
+                                do {
+                                    apisync.syncNote(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCNOTE:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCNOTE:: FAIL");
+                                            }
+                                        }
+                                    });
+                                    Thread.sleep(2000);
+                                } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
+
+                                // -- SYNC Tiers
+                                do {
+                                    apisync.syncTiers(databaseHelper.getApiUrl(database, "url"), databaseHelper.getSyncDTB(database, "token"), new ApiSync.SyncCallback(){
+                                        @Override
+                                        public void onSuccess(boolean success) {
+                                            if (success) {
+                                                Log.i("DEBUG_API_THREAD", "SYNCTIERS:: SUCCESS");
+                                            } else {
+                                                Log.i("DEBUG_API_THREAD", "SYNCTIERS:: FAIL");
+                                            }
+                                        }
+                                    });
                                     Thread.sleep(2000);
                                 } while (databaseHelper.getSyncDTB(database, "createdAt").equals(dateSync));
 
@@ -121,7 +395,7 @@ public class ConnexionHelper {
                                 c_auth = true;
 
                                 // -- EDIT TO ALTER THE DELAY
-                                Thread.sleep(10000);
+                                Thread.sleep(5000);
 
                             }
 
@@ -156,7 +430,7 @@ public class ConnexionHelper {
                         }
                     } catch (InterruptedException e) {
                         isReturnThread = false;
-                        Log.i("THREAD INFO", "ERROR : " + e);
+                        Log.i("DEBUG_THREAD", "ERROR : " + e);
                     }
 
                 }
@@ -166,12 +440,24 @@ public class ConnexionHelper {
         return isReturnThread;
     }
 
-    public static boolean isStopedThread(Context context) {
-        if(t.isAlive()){
-            t.interrupt();
-            isStartedThread = false;
+    public static boolean isStopedThread() {
+        if(t != null){
+            if(t.isAlive()){
+                t.interrupt();
+                isStartedThread = false;
+            }
         }
         return true;
+    }
+
+
+    public static boolean isAliveThread() {
+        if(t != null){
+            if(t.isAlive()){
+                return true;
+            }
+        }
+        return false;
     }
 
 }

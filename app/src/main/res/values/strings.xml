@@ -1,23 +1,144 @@
 <resources>
-    <string name="app_name">AOI Technicien</string>
+    <string name="app_name">Teamdesk</string>
 
-    <string name="title_login">Gestion</string>
-    <string name="title_qrcode">Scan QR Code</string>
-
-    <string name="input_login">Utilisateur</string>
-    <string name="input_psw">Mot de passe</string>
-    <string name="input_qr_code">Numéro de l\'appareil</string>
-
+    <!--BUTTON-->
     <string name="btn_connect">Se connecter</string>
     <string name="btn_search_item">Rechercher l\'appareil</string>
+    <string name="btn_non">Non</string>
+    <string name="btn_oui">Oui</string>
+    <string name="btn_clean">Effacer</string>
+    <string name="btn_valid">Valider</string>
+    <string name="btn_return">Retour</string>
+    <string name="btn_deconnexion">Déconnexion</string>
 
 
-    <string name="forgot_login">Aucun identifiant ?</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <!--TEXTVIEW-->
     <string name="home_frag">Dashboard</string>
     <string name="user_frag">Compte</string>
     <string name="config_frag">Configuration</string>
     <string name="sync_frag">Synchronisation</string>
+    <string name="maintenances">Visites</string>
+    <string name="this_month">Ce mois</string>
+    <string name="interventions">Interventions</string>
+    <string name="hors_service">Hors service</string>
+    <string name="retard">Retard</string>
+    <string name="titre">Titre</string>
+    <string name="sign">Signature</string>
+    <string name="comment">Commentaire</string>
+
+    <string name="loading">Chargement en cours ...</string>
+    <string name="open_map">Étendre la carte</string>
+    <string name="close_map">Réduire la carte</string>
+    <string name="nothing">Aucun contenu</string>
+    <string name="orders">Commandes</string>
+    <string name="note_maintenance">Note de visite *</string>
+    <string name="note_intervention">Note d\'intervention *</string>
+    <string name="type_intervention">Type d\'intervention *</string>
+    <string name="stop_app">Arrêt de l\'appareil</string>
+    <string name="complete_visit">Visite complète</string>
+    <string name="start_date">Date de début *</string>
+    <string name="end_date">Date de fin *</string>
+    <string name="save">Enregistrer</string>
+    <string name="save_close">Enregistrer et Clôturer</string>
+    <string name="forgot_login">Aucun identifiant ?</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_login">Identification</string>
+    <string name="title_qrcode">Scan QR Code</string>
+    <string name="title_information">Information</string>
+    <string name="title_configuration">Configuration</string>
+    <string name="new_maintenance">Nouvelle visite</string>
+    <string name="new_intervention">Nouvelle intervention</string>
+    <string name="new_mount">Montage appareil</string>
+    <string name="finish_mount">Montage terminé</string>
+    <string name="reactivate_app">Réactiver l\'appareil</string>
+    <string name="client_name">Nom du client</string>
+    <string name="without_sign">Continuer sans signature</string>
+    <string name="frequency">Fréquence</string>
+    <string name="previous_save">Page précédente pour enregistrer</string>
+    <string name="group">Groupe</string>
+    <string name="task">Tâche</string>
+
+
+    <string name="input_login">Utilisateur</string>
+    <string name="input_psw">Mot de passe</string>
+    <string name="input_qr_code">Numéro de l\'appareil</string>
+    <string name="input_url_sync">Url de synchronisation</string>
+
+    <string name="no_app">Aucun appareil</string>
+    <string name="no_soc">Aucune société</string>
+    <string name="no_site">Aucun site</string>
+    <string name="no_address">Aucune adresse</string>
+    <string name="no_category">Aucune catégorie</string>
+    <string name="no_type">Aucun type d\'appareil</string>
+    <string name="no_start_service">Aucun service</string>
+    <string name="online">En ligne</string>
+    <string name="offline">Hors service</string>
+    <string name="call_tiers">Tiers : </string>
+    <string name="call_site">Site : </string>
+    <string name="call_address">Adresse : </string>
+    <string name="call_category">Catégorie : </string>
+    <string name="call_type">Type d\'appareil : </string>
+    <string name="call_start_service">Mise en service : </string>
+    <string name="call_status">Etat : </string>
+
+    <string name="info_device">Num. appareil : </string>
+    <string name="info_database">Version db : </string>
+    <string name="info_user">Utilisateur : </string>
+    <string name="info_sync">Synchronisation : </string>
+    <string name="info_url">Url Api : </string>
+    <string name="info_model">Modèle : </string>
+    <string name="info_sdk">Api appareil : </string>
+
+
+    <!--ALERT MESSAGE-->
+    <string name="no_access">Appareil désactivé ou vos droits d\'accès sont restreints.</string>
+    <string name="access">Accès autorisé.</string>
+    <string name="reload_sync">Souhaitez-vous relancer le service de synchronisation?</string>
+    <string name="logout">Souhaitez-vous vous déconnecter?</string>
+
+    <!--TOAST-->
+    <string name="close_menu">Fermeture du menu</string>
+    <string name="open_intervention">Ouverture d\'une intervention</string>
+    <string name="open">Ouverture</string>
+    <string name="connect_start">Connexion réussie</string>
+    <string name="remote_error">Erreur du serveur distant, veuillez réessayer ...</string>
+    <string name="connect_error">Erreur de connexion ou identifiant incorrect, veuillez réessayer ...</string>
+    <string name="remote_connect_error">Echec de connexion au serveur distant, veuillez réessayer ultérieurement...</string>
+    <string name="save_mount">La fiche de montage a bien été enregistrée.</string>
+    <string name="error_save_mount">Erreur lors de l\'enregistrement de la fiche de montage, veuillez réessayer ultérieurement.</string>
+    <string name="error_control_input_mount">Veuillez contrôler les nombres d\'heures pour chaque montage.</string>
+    <string name="no_config_mount">Le montage de cet appareil n\'a pas été configuré, veuillez contacter un administrateur</string>
+    <string name="add_note_maintenance">Veuillez renseigner une note de visite (*)</string>
+    <string name="save_close_maintenance">Enregistrer et clôturer la visite ?</string>
+    <string name="save_maintenance">Nouvelle visite enregistrée.</string>
+    <string name="add_name_sign">Veuillez renseigner le nom et la signature du client.</string>
+    <string name="save_sign">Enregistrer la signature?</string>
+    <string name="save_without_sign">Enregistrer sans signature?</string>
+    <string name="save_intervention">Nouvelle intervention enregistrée.</string>
+    <string name="url_not_found">Veuillez renseigner l\'url de synchronisation.</string>
+    <string name="url_not_insert">Echec de sauvegarde, veuillez réessayer.</string>
+    <string name="url_not_valid">L\'url renseignée n\'est pas valide.</string>
+    <string name="url_insert">Sauvegarde réussie.</string>
+    <string name="url_not_working">L\'url renseignée n\'est pas affiliée à Teamdesk.</string>
+    <string name="url_working">L\'url renseignée est bien reconnue.</string>
+
+    <!--SPLASH-->
+    <string name="open_service">Lancement du service ...</string>
+    <string name="data_analysis">Analyse des données ...</string>
+    <string name="start_sync">Lancement du service de synchronisation ...</string>
+    <string name="connect">Connexion à l\'application ...</string>
+
+    <!--DIALOG-->
+    <string name="create_maintenance">Créer une nouvelle fiche de visite?</string>
+    <string name="continue_maintenance">Voulez-vous poursuivre la visite précédente?</string>
+
+    <!--SERVICE-->
+    <string name="loading_service">Lancement du service en cours ...</string>
+    <string name="service_offline">Service déconnecté</string>
+    <string name="service_online">Service connecté</string>
+    <string name="cannot_connexion">Connexion impossible, veuillez réessayer ultérieurement</string>
+    <string name="late_maintenance">Retard de maintenance</string>
+    <string name="h_s">Hors Service</string>
+
+
 </resources>

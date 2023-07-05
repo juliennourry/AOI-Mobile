@@ -13,12 +13,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import fr.java.aoitechnicien.R;
+
 public class ServiceNetwork extends Service {
 
     final static String CONNECTIVITY_CHANGE_ACTION = "android.net.conn.CONNECTIVITY_CHANGE";
     NotificationManager manager ;
     TextView textSplash;
-    private ConnexionHelper connexionHelper;
+    private ConnexionHelper connexionHelper = new ConnexionHelper();
     private String s_login;
     private String s_password;
     private BroadcastReceiver receiver;
@@ -65,12 +67,23 @@ public class ServiceNetwork extends Service {
             s_password = intent.getStringExtra("password");
         }
 
-        connexionHelper = new ConnexionHelper();
+//        connexionHelper = new ConnexionHelper();
         Log.i("DEBUG_NETWORK", "START::SERVICE");
         // Let it continue running until it is stopped.
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, R.string.loading_service, Toast.LENGTH_LONG).show();
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+
+        if (receiver != null) {
+            try {
+                unregisterReceiver(receiver);
+                Log.e("DEBUG_UNREGISTER", "TRUE");
+            } catch (IllegalArgumentException e) {
+                Log.e("DEBUG_UNREGISTER", e.toString());
+                // receiver was not registered
+            }
+        }
+
         receiver = new BroadcastReceiver() {
 
 
@@ -78,6 +91,7 @@ public class ServiceNetwork extends Service {
             public void onReceive(Context context, Intent intent) {
                 //sharedhelper = new SharedHelper((Activity) context, sessionKey);
                 String action = intent.getAction();
+
                 if (CONNECTIVITY_CHANGE_ACTION.equals(action)) {
                     //check internet connection
                     if (!connexionHelper.isConnectedOrConnecting(context)) {
@@ -96,15 +110,15 @@ public class ServiceNetwork extends Service {
                             if (show && connexionHelper.isOnline) {
                                 connexionHelper.isOnline = false;
                                 Log.e("DEBUG_NETWORK","Connection lost");
-                                connexionHelper.isStopedThread(context);
-                                Toast.makeText(context, "Service Disconnected", Toast.LENGTH_SHORT).show();
+                                connexionHelper.isStopedThread();
+                                Toast.makeText(context, R.string.service_offline, Toast.LENGTH_SHORT).show();
                                 //manager.cancelAll();
                             }
                         }
                     } else {
-                        Log.i("DEBUG_NETWORK","Connected :: "+s_login+" :: "+s_password);
+                        connexionHelper.isStopedThread();
                         connexionHelper.isStartedThread(context, s_login, s_password);
-                        Toast.makeText(context, "Service Connected", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(context, R.string.service_online, Toast.LENGTH_SHORT).show();
                         // Perform your actions here
                         connexionHelper.isOnline = true;
                     }
@@ -118,11 +132,12 @@ public class ServiceNetwork extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        connexionHelper.isStopedThread();
         try{
             if(receiver!=null)
                 unregisterReceiver(receiver);
 
         }catch(Exception e){}
-        Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Service stoppé", Toast.LENGTH_LONG).show();
     }
 }

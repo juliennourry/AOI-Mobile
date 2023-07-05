@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:id="@+id/btnItemMaintenance"
-            android:text="Nouvelle maintenance"
+            android:text="@string/new_maintenance"
             android:textSize="18sp"
             android:layout_marginTop="30dp"
             android:backgroundTint="@color/theme_color"
@@ -27,7 +27,17 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:id="@+id/btnItemIntervention"
-            android:text="Nouvelle intervention"
+            android:text="@string/new_intervention"
+            android:textSize="18sp"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="@color/theme_color"
+            app:cornerRadius="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/btnItemMontage"
+            android:text="@string/new_mount"
             android:textSize="18sp"
             android:layout_marginTop="30dp"
             android:backgroundTint="@color/theme_color"
@@ -37,11 +47,26 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:id="@+id/btnItemOfftime"
-            android:text="Désactiver l'appareil"
+            android:text="@string/reactivate_app"
             android:textSize="18sp"
             android:layout_marginTop="30dp"
-            android:backgroundTint="@color/red"
+            android:backgroundTint="@color/carrot"
+            android:visibility="gone"
             app:cornerRadius="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/btnRetourItemButton"
+            android:text="@string/btn_return"
+            android:textSize="18sp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/gray"
+            style="@style/Widget.AppCompat.Button.Borderless"/>
+
 
     </LinearLayout>
 

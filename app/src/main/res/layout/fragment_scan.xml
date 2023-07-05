@@ -62,14 +62,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="center">
-
-                <SurfaceView
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:id="@+id/camera_view"
-                    android:topLeftRadius="40dp"
-                    android:topRightRadius="40dp"
-                    android:paddingBottom="20dp" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@color/gray"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+                    <SurfaceView
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:id="@+id/camera_view"
+                        android:topLeftRadius="40dp"
+                        android:topRightRadius="40dp"
+                        android:paddingBottom="20dp" />
+
+                </LinearLayout>
 
                 <EditText
                     android:layout_width="match_parent"

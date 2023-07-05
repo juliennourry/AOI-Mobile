@@ -10,8 +10,8 @@ android {
         applicationId "fr.java.aoitechnicien"
         minSdk 23
         targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -52,6 +52,9 @@ dependencies {
     // -- BCRYPT
     implementation 'org.springframework.security:spring-security-crypto:5.7.2'
     implementation 'commons-logging:commons-logging-api:1.1'
+
+    // -- CHART
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     // -- SIGN
 

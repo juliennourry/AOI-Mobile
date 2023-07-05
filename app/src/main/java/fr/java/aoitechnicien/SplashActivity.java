@@ -1,9 +1,9 @@
 package fr.java.aoitechnicien;
 
-import static java.lang.Thread.sleep;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import fr.java.aoitechnicien.Function.SharedHelper;
 import fr.java.aoitechnicien.Requester.DatabaseHelper;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
     public static int SPLASH_TIMER = 3000;
@@ -23,7 +24,6 @@ public class SplashActivity extends AppCompatActivity {
 
     // -- SESSION INFORMATION
     public static final String sessionKey = "sessionKey";
-    public static final String tokenKey = "tokenKey";
     public static final String loginKey = "loginKey";
     public static final String pswKey = "pswKey";
 
@@ -41,63 +41,58 @@ public class SplashActivity extends AppCompatActivity {
         textSplash = findViewById(R.id.text_loader_splash);
 
         // -- Start service network check info
-        textSplash.setText("Lancement du service ...");
+        textSplash.setText(getResources().getString(R.string.open_service));
 
         // -- SESSION INFORMATION
         sharedhelper = new SharedHelper(SplashActivity.this, sessionKey);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        new Handler().postDelayed(() -> {
 
 
-                textSplash.setText("Analyse des données ...");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                // -- START CREATE DB
-                databaseHelper = new DatabaseHelper(getBaseContext());
-                SQLiteDatabase database = databaseHelper.getWritableDatabase();
+            textSplash.setText(getResources().getString(R.string.data_analysis));
+            new Handler().postDelayed(() -> {
+        // -- START CREATE DB
+        databaseHelper = new DatabaseHelper(getBaseContext());
 
-                // -- REMOVE DBB HERE
-                if (databaseHelper.isTableExists(database, "sync") && databaseHelper.isSync(database) && databaseHelper.isConnect(database, sharedhelper.getParam(loginKey), sharedhelper.getParam(pswKey))) {
-                    // table exists
-                    Log.i("DEBUG_SPLASH", " -- SYNC OK --");
-                    textSplash.setText("Lancement du service de synchronisation ...");
+        // -- !! To remove, use it to clean the dev database
+        // -- databaseHelper.deleteDatabase(getBaseContext());
 
-                    //startService(new Intent(getBaseContext(), ServiceNetwork.class));
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
+        SQLiteDatabase database = databaseHelper.getWritableDatabase();
 
-                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                            intent.putExtra("extra_sync", "true");
-                            startActivity(intent);
-                            finish();
-                        }
-                    }, SPLASH_TIMER);
-                } else {
-                    // -- TO REMOVE !
-                    //databaseHelper.onClean(database);
+        // -- REMOVE DBB HERE
+        if (databaseHelper.isTableExists(database, "sync") && databaseHelper.isSync(database) && databaseHelper.isConnect(database, sharedhelper.getParam(loginKey), sharedhelper.getParam(pswKey)) && databaseHelper.hasUrl(database)) {
+            // -- TO REMOVE !
+            //databaseHelper.debugAction(database);
 
-                    textSplash.setText("Connexion à l'application ...");
-                    // table does not exist
-                    Log.i("DEBUG_SPLASH", " -- SYNC NOT --");
+            // table exists
+            Log.i("DEBUG_SPLASH", " -- SYNC OK --");
+            textSplash.setText(getResources().getString(R.string.start_sync));
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                            intent.putExtra("extra_sync", "false");
-                            startActivity(intent);
-                            finish();
-                        }
-                    }, SPLASH_TIMER);
-                }
-                    }
-                }, SPLASH_TIMER);
+            //startService(new Intent(getBaseContext(), ServiceNetwork.class));
+            new Handler().postDelayed(() -> {
 
-            }
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                intent.putExtra("extra_sync", "true");
+                startActivity(intent);
+                finish();
+            }, SPLASH_TIMER);
+        } else {
+            // -- TO REMOVE !
+            //databaseHelper.onClean(database);
+
+            textSplash.setText(getResources().getString(R.string.connect));
+            // table does not exist
+            Log.i("DEBUG_SPLASH", " -- SYNC NOT --");
+
+            new Handler().postDelayed(() -> {
+                Intent intent = new Intent(SplashActivity.this, ConfigActivity.class);
+                intent.putExtra("extra_sync", "false");
+                startActivity(intent);
+                finish();
+            }, SPLASH_TIMER);
+        }
+            }, SPLASH_TIMER);
+
         }, SPLASH_TIMER);
 
     }

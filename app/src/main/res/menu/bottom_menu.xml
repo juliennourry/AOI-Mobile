@@ -6,19 +6,20 @@
         android:title="@string/home_frag"
         android:icon="@drawable/ic_baseline_home_24" />
     <item
-        android:id="@+id/sync_nav"
-        android:title="@string/user_frag"
-        android:icon="@drawable/ic_baseline_sync_24" />
+        android:id="@+id/gestion_nav"
+        android:title="@string/title_qrcode"
+        android:icon="@drawable/ic_baseline_qr_code_scanner_24" />
     <item
         android:title=""
+        android:visible="false"
          />
     <item
-        android:id="@+id/gestion_nav"
+        android:id="@+id/sync_nav"
         android:title="@string/sync_frag"
-        android:icon="@drawable/ic_baseline_settings_24" />
+        android:icon="@drawable/ic_baseline_sync_24" />
     <item
         android:id="@+id/power_nav"
-        android:title="@string/config_frag"
-        android:icon="@drawable/ic_baseline_power_settings_new_24" />
+        android:title="@string/user_frag"
+        android:icon="@drawable/baseline_info_24" />
 
 </menu>

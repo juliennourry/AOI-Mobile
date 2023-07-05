@@ -26,8 +26,8 @@ public class LocListener {
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 // Do something with the location...
-                Log.i("DEBUG_LOCATION", String.valueOf(latitude));
-                Log.i("DEBUG_LOCATION", String.valueOf(longitude));
+//                Log.i("DEBUG_LOCATION", String.valueOf(latitude));
+//                Log.i("DEBUG_LOCATION", String.valueOf(longitude));
             }
 
             public void onStatusChanged(String provider, int status, Bundle extras) {}

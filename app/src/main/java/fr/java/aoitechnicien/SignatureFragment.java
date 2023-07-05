@@ -1,7 +1,9 @@
 package fr.java.aoitechnicien;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -37,6 +39,8 @@ public class SignatureFragment extends DialogFragment {
     Bitmap signatureBitmap;
     Bundle bundle;
     Map<String, String> mapIntervention;
+    Button btnRetourIntervention;
+    Fragment bgFrag;
 
     // -- DB
     private static DatabaseHelper databaseHelper;
@@ -61,6 +65,11 @@ public class SignatureFragment extends DialogFragment {
 
         signView = (SignView) fRoot.findViewById(R.id.signature_view);
         signView.setDrawingCacheEnabled(true);
+
+        // -- TAKE INOFORMATION FROM ANOTHER FRAGMENT
+        bgFrag = (Fragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.frame_layout_item);
+        View bgFragView = bgFrag.getView();
+        btnRetourIntervention = bgFragView.findViewById(R.id.btnRetourIntervention);
 
         // -- START CREATE DB
         databaseHelper = new DatabaseHelper(fRoot.getContext());
@@ -103,21 +112,21 @@ public class SignatureFragment extends DialogFragment {
                 //Bitmap bitmap = Bitmap.createBitmap(signView.getWidth(), signView.getHeight(), Bitmap.Config.ARGB_8888);
                 //signatureBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, false);
                 signatureBitmap = signView.getDrawingCache();
-                Log.e("DEBUG_sBitMap", signatureBitmap.toString());
+                //Log.e("DEBUG_sBitMap", signatureBitmap.toString());
                 // Convert the Bitmap to a byte array
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 signatureBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                 byte[] byteArray = baos.toByteArray();
-                Log.e("DEBUG_sBitMap", byteArray.toString());
+                //Log.e("DEBUG_sBitMap", byteArray.toString());
                 // Encode the byte array as Base64
                 String base64String = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                Log.e("DEBUG_sBitMap", base64String);
+                //Log.e("DEBUG_sBitMap", base64String);
                 mapIntervention.put("signData", base64String);
                 mapIntervention.put("signName", String.valueOf(clientName.getText()));
 
 
                 if(clientName.getText().length() == 0 && base64String.length() == 0) {
-                    toastHelper.LoadToasted("Veuillez renseigner le nom et la signature du client.");
+                    toastHelper.LoadToasted(getResources().getString(R.string.add_name_sign));
                 } else {
                     showSignConfirmationDialog(fRoot.getContext(), database);
                 }
@@ -132,9 +141,9 @@ public class SignatureFragment extends DialogFragment {
 
     public void showSignConfirmationDialog(Context context, SQLiteDatabase database) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Enregistrer la signature?")
+        builder.setMessage(getResources().getString(R.string.save_sign))
                 .setCancelable(false)
-                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.btn_oui), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Perform OK action
                         if(databaseHelper.insertIntervention(database, mapIntervention)) {
@@ -146,7 +155,7 @@ public class SignatureFragment extends DialogFragment {
                         }
                     }
                 })
-                .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.btn_non), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Cancel the popup
                         dialog.cancel();
@@ -159,9 +168,9 @@ public class SignatureFragment extends DialogFragment {
 
     public void showSignNotDialog(Context context, SQLiteDatabase database) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("Enregistrer sans signature?")
+        builder.setMessage(getResources().getString(R.string.save_without_sign))
                 .setCancelable(false)
-                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getResources().getString(R.string.btn_oui), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Perform the positive OK
                         if(databaseHelper.insertIntervention(database, mapIntervention)) {
@@ -173,7 +182,7 @@ public class SignatureFragment extends DialogFragment {
                         }
                     }
                 })
-                .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getResources().getString(R.string.btn_non), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Cancel the popup
                         dialog.cancel();
@@ -184,11 +193,11 @@ public class SignatureFragment extends DialogFragment {
     }
 
     public void redirectionBtnPage() {
-        toastHelper.LoadToasted("Nouvelle intervention enregistrée.");
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout_item, new ItemButtonFragment());
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.commit();
+        toastHelper.LoadToasted(getResources().getString(R.string.save_intervention));
+        btnRetourIntervention.performClick();
+//        Activity currentActivity = getActivity();
+//        Intent intent = new Intent(currentActivity, ItemActivity.class);
+//        startActivity(intent);
+
     }
 }

@@ -19,7 +19,7 @@
                 android:id="@+id/text_note_intervention"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Note d'intervention *"
+                android:text="@string/note_intervention"
                 android:textSize="16sp"
                 android:layout_marginLeft="16dp"/>
 
@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/hint_type_intervention"
                 android:layout_margin="16dp"
-                android:hint="Type d'intervention *"
+                android:hint="@string/type_intervention"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                 <AutoCompleteTextView
@@ -55,7 +55,7 @@
                 android:id="@+id/checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Arrêt de l'appareil"
+                android:text="@string/stop_app"
                 android:layout_marginLeft="12dp"/>
 
 
@@ -63,7 +63,7 @@
                 android:id="@+id/date_start_intervention"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Date de début *"
+                android:text="@string/start_date"
                 android:textSize="16sp"
                 android:layout_margin="16dp"
                 android:padding="16dp"
@@ -74,7 +74,7 @@
                 android:id="@+id/date_end_intervention"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Date de fin *"
+                android:text="@string/end_date"
                 android:textSize="16sp"
                 android:layout_margin="16dp"
                 android:padding="16dp"
@@ -87,13 +87,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:id="@+id/btn_valid_intervention"
-                android:text="Enregistrer"
+                android:text="@string/save"
                 android:textSize="18sp"
                 android:layout_marginTop="30dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:backgroundTint="@color/theme_color"
                 app:cornerRadius="10dp" />
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:id="@+id/btnRetourIntervention"
+                android:text="@string/btn_return"
+                android:textSize="18sp"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/gray"
+                style="@style/Widget.AppCompat.Button.Borderless"/>
+
 
         </LinearLayout>
 

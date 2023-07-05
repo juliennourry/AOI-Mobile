@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String sessionKey = "sessionKey";
     public static final String tokenKey = "tokenKey";
     public static final String loginKey = "loginKey";
+    public static final String urlKey = "urlKey";
     public static final String pswKey = "pswKey";
 
     @Override
@@ -80,10 +81,11 @@ public class LoginActivity extends AppCompatActivity {
                 sharedhelper.stockParam(pswKey, sharedhelper.getParam(pswKey));
 
                 // -- SYNC DATA LOOP
-                Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
-                intentService.putExtra("login", sharedhelper.getParam(loginKey).trim());
-                intentService.putExtra("password", sharedhelper.getParam(pswKey).trim());
-                startService(intentService);
+                // -- OLDSERVICE IF USER IS CONNECTED
+//                Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+//                intentService.putExtra("login", sharedhelper.getParam(loginKey).trim());
+//                intentService.putExtra("password", sharedhelper.getParam(pswKey).trim());
+//                startService(intentService);
 
                 // -- HOME PAGE
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
@@ -132,14 +134,15 @@ public class LoginActivity extends AppCompatActivity {
                     RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonObject.toString());
                     if(extra_sync.equals("false")) {
                         // -- CONNECT WITH API
-                        ApiHelper.getApi("").auth(body).enqueue(new Callback<ModelAuth>() {
+                        ApiHelper.getApi("", sharedhelper.getParam("urlKey")).auth(body).enqueue(new Callback<ModelAuth>() {
                             public void onResponse(Call<ModelAuth> call, Response<ModelAuth> response) {
                                 if (response.isSuccessful()) {
+                                    Log.e("DEBUG_LOGAUTH", String.valueOf(response.body()));
                                     if (!response.body().getAuth().trim().isEmpty()) {
                                         sharedhelper.stockParam(tokenKey, response.body().getAuth());
                                         sharedhelper.stockParam(loginKey, login.getText().toString().trim());
                                         sharedhelper.stockParam(pswKey, psw.getText().toString().trim());
-                                        toastHelper.LoadToasted("Connexion réussie");
+                                        toastHelper.LoadToasted(getResources().getString(R.string.connect_start));
 
 
                                         // -- START SERVICE
@@ -158,10 +161,11 @@ public class LoginActivity extends AppCompatActivity {
                                                             btnConnect.setVisibility(View.VISIBLE);
 
                                                             // -- SYNC DATA LOOP
-                                                            Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
-                                                            intentService.putExtra("login", sharedhelper.getParam(loginKey));
-                                                            intentService.putExtra("password", sharedhelper.getParam(pswKey));
-                                                            startService(intentService);
+                                                            // -- OLDSERVICE AFTER LOGIN BUT DDB IS SYNC
+//                                                            Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+//                                                            intentService.putExtra("login", sharedhelper.getParam(loginKey));
+//                                                            intentService.putExtra("password", sharedhelper.getParam(pswKey));
+//                                                            startService(intentService);
 
                                                             // -- HOME PAGE
                                                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
@@ -170,22 +174,53 @@ public class LoginActivity extends AppCompatActivity {
                                                             finish();
                                                         } else {
                                                             apisync = new ApiSync(sharedhelper.getParam(tokenKey), getBaseContext());
-                                                            if(apisync.syncUser(sharedhelper.getParam(tokenKey)) && apisync.syncItem()) {
-                                                                // -- SYNC DATA LOOP
-                                                                Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
-                                                                intentService.putExtra("login", sharedhelper.getParam(loginKey));
-                                                                intentService.putExtra("password", sharedhelper.getParam(pswKey));
-                                                                startService(intentService);
+                                                            apisync.syncUser(sharedhelper.getParam(urlKey), sharedhelper.getParam(tokenKey), new ApiSync.SyncCallback() {
+                                                                @Override
+                                                                public void onSuccess(boolean success) {
+                                                                    if (success) {
+                                                                        // -- SYNC DATA LOOP
+                                                                        // -- OLDSERVICE AFTER LOGIN BUT DDB IS NOT SYNC
+//                                                                        Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+//                                                                        intentService.putExtra("login", sharedhelper.getParam(loginKey));
+//                                                                        intentService.putExtra("password", sharedhelper.getParam(pswKey));
+//                                                                        startService(intentService);
 
-                                                                progressBar.setVisibility(View.GONE);
-                                                                btnConnect.setVisibility(View.VISIBLE);
+                                                                        progressBar.setVisibility(View.GONE);
+                                                                        btnConnect.setVisibility(View.VISIBLE);
 
-                                                                // -- HOME PAGE
-                                                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                                                startActivity(intent);
-                                                                overridePendingTransition(R.anim.slide_out_animation, R.anim.slide_in_animation);
-                                                                finish();
-                                                            }
+                                                                        // -- HOME PAGE
+                                                                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                                                        startActivity(intent);
+                                                                        overridePendingTransition(R.anim.slide_out_animation, R.anim.slide_in_animation);
+                                                                        finish();
+                                                                    } else {
+                                                                        toastHelper.LoadToasted(getString(R.string.cannot_connexion));
+                                                                        progressBar.setVisibility(View.GONE);
+                                                                        btnConnect.setVisibility(View.VISIBLE);
+                                                                    }
+                                                                }
+                                                            });
+
+//                                                            if(apisync.syncUser(sharedhelper.getParam(tokenKey)) && apisync.syncItem()) {
+//                                                                // -- SYNC DATA LOOP
+//                                                                Intent intentService = new Intent(getBaseContext(), ServiceNetwork.class);
+//                                                                intentService.putExtra("login", sharedhelper.getParam(loginKey));
+//                                                                intentService.putExtra("password", sharedhelper.getParam(pswKey));
+//                                                                startService(intentService);
+//
+//                                                                progressBar.setVisibility(View.GONE);
+//                                                                btnConnect.setVisibility(View.VISIBLE);
+//
+//                                                                // -- HOME PAGE
+//                                                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+//                                                                startActivity(intent);
+//                                                                overridePendingTransition(R.anim.slide_out_animation, R.anim.slide_in_animation);
+//                                                                finish();
+//                                                            } else {
+//                                                                toastHelper.LoadToasted("Connexion impossible");
+//                                                                progressBar.setVisibility(View.GONE);
+//                                                                btnConnect.setVisibility(View.VISIBLE);
+//                                                            }
 
                                                         }
                                                     }
@@ -195,19 +230,19 @@ public class LoginActivity extends AppCompatActivity {
                                         }, SPLASH_TIMER);
 
                                     } else {
-                                        toastHelper.LoadToasted("Erreur du serveur distant, veuillez réessayer ...");
+                                        toastHelper.LoadToasted(getResources().getString(R.string.remote_error));
                                         progressBar.setVisibility(View.GONE);
                                         btnConnect.setVisibility(View.VISIBLE);
 
                                     }
                                 } else {
-                                    toastHelper.LoadToasted("Erreur de connexion ou identifiant incorrect, veuillez réessayer ...");
+                                    toastHelper.LoadToasted(getResources().getString(R.string.connect_error));
                                     progressBar.setVisibility(View.GONE);
                                     btnConnect.setVisibility(View.VISIBLE);
                                 }
                             }
                             public void onFailure(Call<ModelAuth> call, Throwable t) {
-                                toastHelper.LoadToasted("Echec de connexion au serveur distant, veuillez réessayer ultérieurement...");
+                                toastHelper.LoadToasted(getResources().getString(R.string.remote_connect_error));
                                 progressBar.setVisibility(View.GONE);
                                 btnConnect.setVisibility(View.VISIBLE);
                             }

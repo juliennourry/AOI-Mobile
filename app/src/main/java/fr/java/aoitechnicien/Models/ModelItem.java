@@ -14,11 +14,12 @@ public class ModelItem {
     private String uuid;
     private String createdAt;
     private String deletedAt;
+    private Integer fk_category;
     private String category;
     private String id_site;
     private Integer access;
 
-    public ModelItem(Integer id, Integer id_sync, String label, String onAt, String uuid, String createdAt, String deletedAt, String category, String id_site, Integer access) {
+    public ModelItem(Integer id, Integer id_sync, String label, String onAt, String uuid, String createdAt, String deletedAt, Integer fk_category, String category, String id_site, Integer access) {
         this.id = id;
         this.id_sync = id_sync;
         this.label = label;
@@ -26,6 +27,7 @@ public class ModelItem {
         this.uuid = uuid;
         this.createdAt = createdAt;
         this.deletedAt = deletedAt;
+        this.fk_category = fk_category;
         this.category = category;
         this.id_site = id_site;
         this.access = access;
@@ -79,6 +81,10 @@ public class ModelItem {
     public void setDeletedAt(String deletedAt) {
         this.deletedAt = deletedAt;
     }
+
+    public Integer getFkCategory() { return fk_category; }
+
+    public void setFkCategory(Integer fk_category) { this.fk_category = fk_category; }
 
     public String getCategory() { return category; }
 

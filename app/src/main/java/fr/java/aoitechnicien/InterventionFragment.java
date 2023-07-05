@@ -26,8 +26,11 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 import fr.java.aoitechnicien.Function.CalendarPicker;
 import fr.java.aoitechnicien.Function.SharedHelper;
@@ -37,11 +40,11 @@ import fr.java.aoitechnicien.Requester.DatabaseHelper;
 
 public class InterventionFragment extends Fragment {
 
-    String[] item = {"Réparation", "Dépannage"};
+    String[] item = {"Autre", "Dépannage", "Réparation"};
     String itemSelected = "";
     AutoCompleteTextView autoCompleteTextView;
     ArrayAdapter<String> adapterItems;
-    Button btnValidIntervention;
+    Button btnValidIntervention, btnRetourIntervention;
     TextView startDateIntervention, endDateIntervention, textNoteIntervention, editTextNoteIntervention;
     CalendarPicker calendarPicker;
     Integer control_form;
@@ -80,6 +83,7 @@ public class InterventionFragment extends Fragment {
         toastHelper = new ToastHelper(getActivity());
 
         btnValidIntervention = fRoot.findViewById(R.id.btn_valid_intervention);
+        btnRetourIntervention = fRoot.findViewById(R.id.btnRetourIntervention);
         autoCompleteTextView = fRoot.findViewById(R.id.auto_complete_text_view);
         startDateIntervention = fRoot.findViewById(R.id.date_start_intervention);
         endDateIntervention = fRoot.findViewById(R.id.date_end_intervention);
@@ -139,13 +143,30 @@ public class InterventionFragment extends Fragment {
                 if(control_form > 0) {
                     toastHelper.LoadToasted("Veuillez contrôler les champs obligatoires (*)");
                 } else {
+                    Calendar calendar = Calendar.getInstance();
+                    Date currentDate = calendar.getTime();
+
                     mapIntervention = new HashMap<>();
                     mapIntervention.put("fkUser", databaseHelper.getIdSyncUser(database, sharedhelper_user.getParam("loginKey")));
                     mapIntervention.put("fkItemsite", sharedhelper_appareil.getParam("idsyncKey"));
                     CharSequence editText = editTextNoteIntervention.getText();
                     String textNote = editText.toString();
                     mapIntervention.put("note", textNote);
-                    mapIntervention.put("type", itemSelected);
+                    String typeSelected = "0";
+                    switch(itemSelected) {
+                        case "Autre":
+                            typeSelected = "0";
+                            break;
+                        case "Dépannage":
+                            typeSelected = "1";
+                            break;
+                        case "Réparation":
+                            typeSelected = "2";
+                            break;
+                        default:
+                            typeSelected = "0";
+                    }
+                    mapIntervention.put("type", typeSelected);
                     if(checkstop.isChecked()){
                         mapIntervention.put("stop", (String) "1");
                     } else {
@@ -154,12 +175,27 @@ public class InterventionFragment extends Fragment {
                     mapIntervention.put("startDate", (String) startDateIntervention.getText());
                     mapIntervention.put("endDate", (String) endDateIntervention.getText());
                     mapIntervention.put("coordinates", sharedhelper_appareil.getParam("coordKey"));
+                    mapIntervention.put("createdAt", String.valueOf(currentDate));
+                    Log.e("DEBUG_MAP_INTERVENTION_CREATION", mapIntervention.toString());
                     bundle = new Bundle();
                     bundle.putSerializable("mapIntervention", (Serializable) mapIntervention);
                     SignatureFragment fragment = new SignatureFragment();
                     fragment.setArguments(bundle);
                     fragment.show(getParentFragmentManager(), "SignFrag");
                 }
+            }
+        });
+
+        btnRetourIntervention.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // -- default Fragment
+                FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.frame_layout_item,new ItemButtonFragment());
+                fragmentTransaction.addToBackStack("01");
+                fragmentTransaction.commit();
+                fragmentManager.popBackStack("01", 0);
             }
         });
 
